@@ -2,11 +2,21 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { ReportsJobService } from './reports/reports-job/reports-job.service';
+import { BullModule } from '@nestjs/bull';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    PrismaModule,
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+    ReportsModule,
+  ],
   controllers: [AppController],
-  providers: [AppService, ReportsJobService],
+  providers: [AppService],
 })
 export class AppModule {}
