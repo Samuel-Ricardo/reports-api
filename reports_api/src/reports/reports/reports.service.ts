@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma/prisma.service';
 import { Status } from '@prisma/client';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class ReportsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @InjectQueue('reports')
+    private reportsQueue: Queue,
+  ) {}
 
   all() {
     return this.prisma.report.findMany({
@@ -16,13 +22,15 @@ export class ReportsService {
     return this.prisma.report.findUnique({ where: { id } });
   }
 
-  async request(filename?: string) {
+  async request() {
     const report = await this.prisma.report.create({
       data: {
-        filename,
+        filename: '',
         status: Status.PENDING,
       },
     });
+
+    await this.reportsQueue.add({ reportID: report.id });
     return report;
   }
 

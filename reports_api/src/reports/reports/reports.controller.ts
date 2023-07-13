@@ -31,7 +31,7 @@ export class ReportsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseIntPipe()) id: number) {
+  findOne(@Param('id') id: string) {
     return this.service.findOne(id + '');
   }
 
@@ -42,10 +42,10 @@ export class ReportsController {
 
   @Sse(':id/events')
   events(
-    @Param('id', new ParseIntPipe()) id: number,
+    @Param('id') id: string,
     @Res() response: Response,
   ): Observable<MessageEvent> {
-    return defer(() => this.service.findOne(id + '')).pipe(
+    return defer(() => this.service.findOne(id)).pipe(
       repeat({
         delay: 1000,
       }),

@@ -1,68 +1,47 @@
 <html>
-
   <head>
-  
     <title>Reports</title>
-  
   </head>
-
   <body>
-  
-    <h1>Reports</h1>
-
-    <ul id="reports" >
-    
+    <h1>Relatórios</h1>
+    <ul id="reports">
       {{#each reports}}
-
         <li>
-          <p id="report{{this.id}}-filename" >
-             File: {{this.filename}}
+          <p id="report-{{this.id}}-filename">
+            Arquivo:{{this.filename}}
           </p>
-
           <p>
-            Date: {{this.created_at}}
+            Data:{{this.created_at}}
           </p>
-
-          <p id="report{{this.id}}-status" > 
+          <p id="report-{{this.id}}-status">
             Status: {{this.status}}
           </p>
-        
         </li>
-
       {{/each}}
- 
     </ul>
- 
     <button type="button" onclick="createReport()">
-      New Report
+      Criar
     </button>
-
   </body>
-
   <script>
 
-    let countEventSource = 0;
+    let countEventSources = 0;
 
     async function createReport(){
-    
-      if(countEventSource === 6) {
-        alert('Report limit reached, wait some one finish for create a new report :)');
-        return;
+      if(countEventSources === 6 ){
+          alert('Limite de relatórios atingido, aguarde a finalização de algum relatório para criar um novo.');
+          return;
       }
-
-      countEventSource++;
-
+      countEventSources++;
+      
       const res = await fetch('/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
       })
-
       const newReport = await res.json();
-
-        document.getElementById('reports').innerHTML += `
-    
+        document.getElementById('reports').innerHTML = `
           <li>
             <p id="report-${newReport.id}-filename">
               Arquivo: ${newReport.filename}
@@ -72,35 +51,28 @@
             </p>
             <p id="report-${newReport.id}-status">
               Status: ${newReport.status}
+            </p>
           </li>
-        
         ` + document.getElementById('reports').innerHTML;
-
-        subscribeEvents(newReport.id);
+      subscribeEvents(newReport.id);
     }
 
-    function subscribeEvents(reportID){
-      console.log("subscribing to events");
-
-      const eventSource = new EventSource(`/reports/${reportID}/events`);
+    function subscribeEvents(reportId){
+      console.log('subscribing to events');
+      const eventSource = new EventSource(`/reports/${reportId}/events`);
       eventSource.onmessage = (event) => {
-        
         console.log(event);
-        const updateReport = JSON.parse(event.data);
-        
+        const updatedReport = JSON.parse(event.data);
         document.getElementById(`report-${reportId}-status`).innerHTML = `Status: ${updatedReport.status}`;
-        document.getElementById(`report-${reportId}-filename`).innerHTML = `Arquivo: ${updatedReport.filename}`;      
-        
-        if(updateReport.status === 'DONE' || updateReport.status === 'ERROR') {
+        document.getElementById(`report-${reportId}-filename`).innerHTML = `Arquivo: ${updatedReport.filename}`;
+        if(updatedReport.status === 'DONE' || updatedReport.status === 'ERROR'){
           eventSource.close();
-          delete EventSource;
-          countEventSource--;
+          delete eventSource;
+          countEventSources--;
         }
 
       }
-        
+      
     }
-
   </script>
-
-<html>
+</html>
