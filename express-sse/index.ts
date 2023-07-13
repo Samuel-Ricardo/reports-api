@@ -29,7 +29,7 @@ app.get("/events", (req, res: Response) => {
   setTimeout(() => {
     clearInterval(interval);
 
-    res.write("Event: close \n");
+    res.write("event: close \n");
     res.write("data: Connection Closed \n\n");
 
     res.end();
