@@ -13,8 +13,8 @@ services:
     ports:
       - '3306:3306'
     environment:
-      - MYSQL_ROOT_PASSWORD: root
-      - MYSQL_DATABASE: reports
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=reports
 
   redis:
     image: redis:7.0.8-alpine
