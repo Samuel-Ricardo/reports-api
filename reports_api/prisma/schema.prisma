@@ -14,5 +14,12 @@ model Report {
   id              String @id @default(cuid())
   filename        String
   created_at      DateTime @default(now())
+  status          Status
+}
 
+enum Status {
+    PENDING
+    PROCESSING
+    DONE
+    ERROR
 }
