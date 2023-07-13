@@ -39,4 +39,68 @@
 
   </body>
 
+  <script>
+
+    let countEventSource = 0;
+
+    async function createReport(){
+    
+      if(countEventSource === 6) {
+        alert('Report limit reached, wait some one finish for create a new report :)');
+        return;
+      }
+
+      countEventSource++;
+
+      const res = await fetch('/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      const newReport = await res.json();
+
+        document.getElementById('reports').innerHTML += `
+    
+          <li>
+            <p id="report-${newReport.id}-filename">
+              Arquivo: ${newReport.filename}
+            </p>
+            <p>
+              Data: ${newReport.created_at}
+            </p>
+            <p id="report-${newReport.id}-status">
+              Status: ${newReport.status}
+          </li>
+        
+        ` + document.getElementById('reports').innerHTML;
+
+        subscribeEvents(newReport.id);
+    }
+
+    function subscribeEvents(reportID){
+      console.log("subscribing to events");
+
+      const eventSource = new EventSource(`/reports/${reportID}/events`);
+      eventSource.onmessage = (event) => {
+        
+        console.log(event);
+        const updateReport = JSON.parse(event.data);
+        
+        document.getElementById(`report-${reportId}-status`).innerHTML = `Status: ${updatedReport.status}`;
+        document.getElementById(`report-${reportId}-filename`).innerHTML = `Arquivo: ${updatedReport.filename}`;      
+        
+        if(updateReport.status === 'DONE' || updateReport.status === 'ERROR') {
+          eventSource.close();
+          delete EventSource;
+          countEventSource--;
+        }
+
+      }
+        
+    }
+
+  </script>
+
 <html>
