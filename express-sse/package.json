@@ -4,7 +4,7 @@
   "description": "server sent events example",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --exec ts-node index.ts"
   },
   "author": "@Samuel",
   "license": "MIT",
