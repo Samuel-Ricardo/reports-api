@@ -35,3 +35,7 @@ app.get("/events", (req, res: Response) => {
     res.end();
   }, 10000);
 });
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
