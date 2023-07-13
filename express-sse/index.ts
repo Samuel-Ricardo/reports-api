@@ -21,4 +21,17 @@ app.get("/events", (req, res: Response) => {
     res.write(`event: message \n`);
     res.write(`data: ${JSON.stringify(data)} \n\n`);
   };
+
+  // send event every seconds
+  const interval = setInterval(sendEvent, 1000);
+
+  // close connection after 10 seconds
+  setTimeout(() => {
+    clearInterval(interval);
+
+    res.write("Event: close \n");
+    res.write("data: Connection Closed \n\n");
+
+    res.end();
+  }, 10000);
 });
