@@ -10,4 +10,8 @@ export class ReportsService {
       orderBy: { created_at: 'desc' },
     });
   }
+
+  findOne(id: string) {
+    return this.prismaService.report.findUnique({ where: { id } });
+  }
 }
