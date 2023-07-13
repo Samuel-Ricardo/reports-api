@@ -25,4 +25,30 @@ export class ReportsService {
     });
     return report;
   }
+
+  async produce(reportID: string) {
+    console.log('[PRODUCER] Producing report: ' + reportID);
+
+    await new Promise((f) => setTimeout(f, Math.random() * 1000));
+
+    await this.prisma.report.update({
+      where: { id: reportID },
+      data: { status: Status.PROCESSING },
+    });
+
+    await new Promise((f) => setTimeout(f, Math.random() * 1000));
+
+    const randomStatus = Math.random() > 0.5 ? Status.DONE : Status.ERROR;
+
+    await this.prisma.report.update({
+      where: { id: reportID },
+      data: {
+        filename:
+          randomStatus === Status.DONE ? 'report-${reportID}.pdf' : null,
+        status: randomStatus,
+      },
+    });
+  }
 }
+
+const sleep = (ms: number) => new Promise((f) => setTimeout(f, ms));
