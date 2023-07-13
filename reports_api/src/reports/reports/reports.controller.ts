@@ -11,4 +11,9 @@ export class ReportsController {
     const reports = await this.service.all();
     return { reports };
   }
+
+  @Get()
+  async all() {
+    return await this.service.all();
+  }
 }
