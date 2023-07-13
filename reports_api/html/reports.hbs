@@ -6,4 +6,37 @@
   
   </head>
 
+  <body>
+  
+    <h1>Reports</h1>
+
+    <ul id="reports" >
+    
+      {{#each reports}}
+
+        <li>
+          <p id="report{{this.id}}-filename" >
+             File: {{this.filename}}
+          </p>
+
+          <p>
+            Date: {{this.created_at}}
+          </p>
+
+          <p id="report{{this.id}}-status" > 
+            Status: {{this.status}}
+          </p>
+        
+        </li>
+
+      {{/each}}
+ 
+    </ul>
+ 
+    <button type="button" onclick="createReport()">
+      New Report
+    </button>
+
+  </body>
+
 <html>
